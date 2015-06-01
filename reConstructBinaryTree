@@ -1,0 +1,46 @@
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+	struct TreeNode* reConstructBinaryTree(vector<int> pre,vector<int> in) {
+        if(pre.size()==0||in.size()==0)
+            return NULL;
+        vector<int>::iterator preitr = pre.begin();
+        vector<int>::iterator initr = in.begin();
+        return ConstructCore(preitr,preitr+pre.size()-1,initr,initr+in.size()-1);
+	}
+    struct TreeNode* ConstructCore(vector<int>::iterator preBegin,vector<int>::iterator preEnd,vector<int>::iterator inBegin,vector<int>::iterator inEnd) {
+        int rootvalue = *preBegin;
+        TreeNode* root = new TreeNode(rootvalue);
+        
+        if(preBegin==preEnd) {
+            if(inBegin == inEnd && *preBegin == *inBegin)
+                return root;
+            else
+                throw std::exception("Invalid input.");
+        }
+        vector<int>::iterator rootInorder = inBegin;
+        while(rootInorder <= inEnd && *rootInorder!= rootvalue)
+            ++rootInorder;
+        
+        if(rootInorder == inEnd && *rootInorder != rootvalue)
+            throw std::exception("Invalid input.");
+        
+        int leftLength = rootInorder - inBegin;
+        vector<int>::iterator leftPreEnd = preBegin + leftLength;
+        if(leftLength > 0){
+            root->left = ConstructCore(preBegin+1,leftPreEnd,inBegin,rootInorder-1);
+        }
+        if(leftLength < inEnd-inBegin){
+            root->right = ConstructCore(leftPreEnd+1,preEnd,rootInorder+1,inEnd);
+        }
+        return root;
+    }
+};
