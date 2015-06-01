@@ -1,0 +1,63 @@
+/*
+struct RandomListNode {
+	int label;
+	struct RandomListNode *next, *random;
+	RandomListNode(int x) :
+			label(x), next(NULL), random(NULL) {
+	}
+};
+*/
+class Solution {
+public:
+	RandomListNode* Clone(RandomListNode* pHead)
+	{
+		CloneNodes(pHead);
+        ConnectRandomNodes(pHead);
+        return ReconnectNodes(pHead);
+	}
+    
+    void CloneNodes(RandomListNode* pHead)
+    {
+     	RandomListNode* pNode = pHead;
+        while(pNode!=NULL)
+        {
+            RandomListNode* pCloneNode = new RandomListNode(pNode->label);
+            pCloneNode->next = pNode->next;
+            pCloneNode->random = NULL;
+            pNode->next = pCloneNode;
+            pNode = pCloneNode->next;    
+        }
+    }
+    
+    void ConnectRandomNodes(RandomListNode* pHead)
+    {
+    	RandomListNode* pNode = pHead;
+        while(pNode!=NULL)
+        {
+            if(pNode->random!=NULL)
+        		pNode->next->random = pNode->random->next;
+            pNode = pNode->next->next;
+        }
+    }
+   	
+    RandomListNode* ReconnectNodes(RandomListNode* pHead)
+    {
+    	RandomListNode* pNode = pHead;
+        RandomListNode* pCloneHead = NULL;
+        RandomListNode* pCloneNode = NULL;
+        if(pNode!=NULL)
+        {
+        	pCloneHead = pCloneNode = pNode->next;
+            pNode->next = pCloneNode->next;
+            pNode = pNode->next;
+        }
+        while(pNode!=NULL)
+        {
+        	pCloneNode->next = pNode->next;
+            pCloneNode = pNode->next;
+            pNode->next = pCloneNode->next;
+            pNode = pNode->next;
+        }
+        return pCloneHead;
+    }
+};
