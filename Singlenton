@@ -1,0 +1,68 @@
+http://blog.cnbang.net/tech/2229/
+//plan1:线程不安全、局部作用域下的静态变量
+class QMManager
+{
+public:
+  static QMManager &instance()
+  {
+    static QMManager instance_;
+    return instance_;
+  }
+};
+
+//plan2:加锁，代价变大
+class QMManager
+{
+public:
+  static QMManager &instance()
+  {
+    Lock();
+    static QMManager instance_;
+    UnLock();
+    return instance_;
+  }
+};
+
+//plan3:内部静态实例变成类的静态成员，在外部初始化,main函数执行前就初始化这个实例（饿汉模式），就不会有线程重入问题了
+class QMManager
+{
+protected:
+  static QMManager instance_;
+  QMManager();
+  ~QMManager(){};
+public:
+  static QMManager *instance()
+  {
+    return &instance_;
+  }
+  void do_something();
+};
+QMManager QMManager::instance_;//外部初始化
+//存在问题：单例类的构造函数里调用另一个单例类的方法可能会有问题
+
+//plan4：单例对象作为静态局部变量，但增加一个辅助类让单例对象可以在一开始就初始化。
+class QMManager
+{
+protected:
+    struct object_creator
+    {
+        object_creator()
+        {
+            QMManager::instance();
+        }
+        inline void do_nothing() const {}
+    };
+    static object_creator create_object_;
+ 
+    QMManager();
+    ~QMManager(){};
+public:
+    static QMManager *instance()
+    {
+        static QMManager instance;
+        return &instance;
+    }
+};
+QMManager::object_creator QMManager::create_object_;
+//跟方案三的区别在于QMManager调用QMSqlite单例时，方案3是取到全局静态变量，此时这个变量未初始化，而方案四的单例是静态局部变量，
+此时调用会初始化。跟最初方案一的区别是在main函数前就初始化了单例，不会有线程安全问题.
