@@ -1,0 +1,31 @@
+class Solution {
+public:
+	double Power(double base, int exponent) {
+		if(isZeroDouble(base)&&(exponent<0)) return 0.0;
+        if(!isZeroDouble(base)){
+            if(exponent>=0){          
+            	if(exponent == 0) return 1;
+            	if(exponent == 1) return base;
+                double temp = Power(base,exponent>>1);
+                temp *= temp;
+            	if((exponent & 0x1) == 1) 
+                	temp = temp*base;
+            	return temp;
+            	}
+            else {
+                exponent = -exponent;
+            	if(exponent == 1) return 1/base;
+            	double temp = Power(base,exponent>>1);
+                temp *= temp;
+            	if((exponent & 0x1) == 1) 
+                	temp = temp*base;
+            	return 1/temp;
+            }
+        }
+            
+	}
+    
+    bool isZeroDouble(double value){
+        return (value<0.00000001&&value>-0.00000001) ? true : false; 
+    }
+};
