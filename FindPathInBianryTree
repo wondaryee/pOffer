@@ -1,0 +1,41 @@
+/*
+struct TreeNode {
+	int val;
+	struct TreeNode *left;
+	struct TreeNode *right;
+	TreeNode(int x) :
+			val(x), left(NULL), right(NULL) {
+	}
+};
+*/
+class Solution {
+public:
+	vector<vector<int>> FindPath(TreeNode* root,int expectNumber) {
+        int currentSum = 0;
+        vector<vector<int>> pathes;
+        vector<int> path;
+        FindPathCore(root,expectNumber,path,pathes,currentSum);
+        return pathes;
+	}
+    void FindPathCore(TreeNode* root,
+                      int expectNumber,
+                      vector<int>& path,
+                      vector<vector<int>>& pathes,
+                      int& currentSum)
+    {
+    	if(!root) return;
+        currentSum += root->val;
+        path.push_back(root->val);
+        
+        bool isLeaf = (!root->left && !root->right);
+        if(isLeaf && currentSum == expectNumber)
+            pathes.push_back(path);
+        if(root->left)
+            FindPathCore(root->left,expectNumber,path,pathes,currentSum);
+        if(root->right)
+            FindPathCore(root->right,expectNumber,path,pathes,currentSum);
+        
+        currentSum -= root->val;
+        path.pop_back();
+    }
+};
