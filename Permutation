@@ -1,0 +1,39 @@
+class Solution {
+public:
+	vector<string> Permutation(string str)
+{
+        vector<string> vec;
+        int length=str.size();
+        if(length==0)return vec;
+         
+        sort(str.begin(),str.end());
+        int k=0;
+        subPermutation(str,vec,k);
+        return vec;
+}
+     
+    void subPermutation(string str,vector<string>& vec,int k)
+    {
+            int length=str.size();
+            if(k==length)vec.push_back(str);
+             
+            int i=k;
+            for(;i<length;i++)
+                {
+                    if((str[k]==str[i])&&k!=i)
+                        continue;
+                    swap(str[k],str[i]);
+                    sort(str.begin()+k+1,str.end());
+                    subPermutation(str,vec,k+1);
+                    sort(str.begin()+k,str.end());
+                }
+    }
+     
+    void swap(char& m,char& n)
+    {
+            char temp;
+            temp=m;
+            m=n;
+            n=temp;
+    }
+};
