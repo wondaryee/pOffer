@@ -1,0 +1,18 @@
+class Solution {
+public:
+	vector<int> GetLeastNumbers_Solution(vector<int> input, int k) {
+		vector<int> result;
+        int n = input.size();
+        if(n == 0 || k<=0 || n<k) return result;
+        for(int i = 0;i<k;++i) result.push_back(input[i]);
+        sort(result.begin(),result.end());
+        for(int j = k;j<n;++j){
+            if(input[j]<result[k-1]){
+				result.erase(result.end()-1);
+                result.push_back(input[j]);
+                sort(result.begin(),result.end());
+            }
+        }
+        return result;
+	}
+};
